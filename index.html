@@ -1,0 +1,228 @@
+<!-- Features -------------------------------------- 
+	1. Validation within pre-defined valid types
+	2. Highlights yellow for empty fields
+	3. NaN checks for Price, formatted
+	4. Generate & Calculate Price w/GST, formatted
+---------------------------------------------------->
+<html>
+
+<head>
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Bungee|Bungee+Hairline" rel="stylesheet">
+	<!-- Font Awesome Icons -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<style>
+		h1 {
+		color: black;
+		}
+		hr {
+			display: block;
+			border: 0;
+			border-top: 3px solid #ffcc00;
+			padding: 0; 
+		}
+		textarea {
+			width: 85%;
+		}
+		#div_main {
+			font-family: 'Bungee', cursive;
+			margin: auto;
+			margin-top: 30px;
+			width: 480px;
+		}
+		#div_left {
+			width: 200px;
+			display: block;
+			float: left;
+		}
+		#div_left p {
+			margin-bottom: 19px;
+		}
+		#div_right {
+			width: 280px;
+			display: block;
+			float: right;
+		}
+		i {
+  			margin-right: 5px;
+		}
+		.clear {
+			clear: both;
+		}
+		.yellow {
+			background-color: Yellow;           
+		}
+		.white {
+			background-color: White;    	
+		}
+		[type="text"] {
+			font-family: 'Bungee', cursive;
+			font-size: 14px;
+		}
+		[type="submit"] {
+			font-family: 'Bungee', cursive;
+			background-color: #ffcc00; 
+			font-size: 16px;
+			margin-top: 10px;
+			padding: 5px 10px;
+		}
+		#selectType {
+			font-family: 'Bungee', cursive; 
+			font-size: 14px; 	
+		}
+		#divMessage {
+			font-family: 'Bungee', cursive; 
+			font-size: 11px; 	
+		}
+		#txtDescription {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 14px;
+		}
+		#priceGST {
+			font-size: 16px;
+		}
+	</style>
+
+	<script>
+		function calGST() {
+			document.getElementById("priceGST").innerHTML = "";
+			var priceWithGST = document.getElementById("txtPrice").value * 1.07;
+			document.getElementById("priceGST").innerHTML += "$" + priceWithGST.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"); //Formatting output values
+			var input = document.getElementById("txtPrice");
+			input.value = parseInt(input.value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+		}
+
+		function validateForm() {
+			var success = true;
+			var foodTypes = ["western", "chinese", "local", "beverage"]; 							//Declaration of all valid food types
+
+			var txtFoodNameBox = document.getElementById("txtFoodName"); 							//Retrieve corresponding elements
+			var selectTypeBox = document.getElementById("selectType");
+			var txtPictureNameBox = document.getElementById("txtPictureName");
+			var radioHalal_YesBtn = document.getElementById("radioHalal_Yes");
+			var radioHalal_NoBtn = document.getElementById("radioHalal_No");
+			var radioVeg_YesBtn = document.getElementById("radioVeg_Yes");
+			var radioVeg_NoBtn = document.getElementById("radioVeg_No");
+			var txtPriceBox = document.getElementById("txtPrice");
+			var txtDescriptionBox = document.getElementById("txtDescription");
+			var msgBox = document.getElementById("divMessage");
+			
+			var valFoodName = txtFoodNameBox.value; 												//Retrieve input values
+			var valType = selectTypeBox.value;
+			var valPictureName = txtPictureNameBox.value;
+			var valPrice = txtPriceBox.value;
+			var valDescription = txtDescriptionBox.value;
+			
+			txtFoodNameBox.style = "white";															//Resets to default everytime function runs
+			txtPictureNameBox.style = "white";
+			txtPriceBox.style = "white";
+			txtDescriptionBox.style = "white";
+			msgBox.innerHTML = "";
+
+			if (valFoodName == "") {																//Update error msg, colour, Boolean value, prevents submission of form
+				txtFoodNameBox.style.backgroundColor = "yellow";
+				msgBox.innerHTML += "Name of food item is required.<br>";
+				success = false;
+			}
+			if (valType == "Select a Type") {
+				msgBox.innerHTML += "Type of food item is required.<br>";
+				success = false;
+			} else {
+				var foodTypeFound = false;
+				for (i = 0; i < foodTypes.length; i++) {
+					if (valType == foodTypes[i]) {
+						foodTypeFound = true;
+					}
+				}
+				if (foodTypeFound == false) {
+					msgBox.innerHTML += "Please select a valid Food Type.<br>";
+					success = false;
+				}
+			}
+			if (valPictureName == "") {
+				txtPictureNameBox.style.backgroundColor = "yellow";
+				msgBox.innerHTML += "Title of food item is required.<br>";
+				success = false;
+			}
+			if (!(document.getElementById("radioHalal_Yes").checked || document.getElementById("radioHalal_No").checked)) {
+				msgBox.innerHTML += "Please indicate whether food item is Halal.<br>";
+				success = false;
+			}
+			if (!(document.getElementById("radioVeg_Yes").checked || document.getElementById("radioVeg_No").checked)) {
+				msgBox.innerHTML += "Please indicate whether food item is Vegetarian.<br>";
+				success = false;
+			}
+			if (valPrice == "") {
+				txtPriceBox.style.backgroundColor = "yellow";
+				msgBox.innerHTML += "Price of food item is required.<br>";
+				success = false;
+			} else {
+				if (isNaN(valPrice)) {																//Checks if amount is a number
+					msgBox.innerHTML += "Please enter numeric value for food item price.<br>";
+					success = false;
+				}
+			}
+			if (valDescription == "") {
+				txtDescriptionBox.style.backgroundColor = "yellow";
+				msgBox.innerHTML += "Description of food item is required.<br>";
+				success = false;
+			} 
+		return success; 																			//If nothing goes wrong, returns true, continue submission of form       
+		}
+	</script>
+</head>
+
+<body>
+	<div id="div_main">
+		<h1>
+			Add Food Item
+		</h1>
+		<hr>
+		<form action="process.html" method="POST" id="fForm" name="fForm">
+			<div id="div_left">
+				<p><i class="fa fa-plus-square fa-fw"></i>Name :</p>
+				<p><i class="fa fa-cutlery fa-fw"></i>Type :</p>
+				<p><i class="fa fa-image fa-fw"></i>Image Title :</p>
+				<p><i class="fa fa-certificate fa-fw"></i>Halal :</p>
+				<p><i class="fa fa-leaf fa-fw"></i>Vegetarian :</p>
+				<p><i class="fa fa-dollar fa-fw"></i>Price :</p>
+				<p><i class="fa fa-dollar fa-fw"></i>(incl.GST) :</p>
+			</div>
+			<div id="div_right">
+				<p><input type="text" id="txtFoodName" name="txtFoodName"></p>
+				<p>
+					<select id="selectType" name="typeSelector">
+						<option>Select a Type</option>
+						<option value="western">Western</option>
+						<option value="chinese">Chinese</option>
+						<option value="local">Local</option>
+						<option value="beverage">Beverage</option>
+						<!-- <option value="try">Try</option> -->
+					</select>
+				</p>
+				<p><input type="text" id="txtPictureName" name="txtPictureName"></p>
+				<p>
+					<input type="radio" id="radioHalal_Yes" name="radioHalal"><label for="radioHalal_Yes">Yes</label>
+					<input type="radio" id="radioHalal_No" name="radioHalal"><label for="radioHalal_No">No</label>
+				</p>
+				<p>
+					<input type="radio" id="radioVeg_Yes" name="radioVeg"><label for="radioVeg_Yes">Yes</label>
+					<input type="radio" id="radioVeg_No" name="radioVeg"><label for="radioVeg_No">No</label>
+				</p>
+				<p><input type="text" id="txtPrice" name="txtPrice" onblur="calGST()"></p>
+				<p><div id="priceGST"></div></p>
+			</div>
+			<div class="clear"></div>
+			<i class="fa fa-pencil-square-o fa-fw"></i>Description:
+			<br>
+			<textarea id="txtDescription" name="txtDescription"></textarea>
+			<br>
+			<input type="submit" id="btnSubmit" onclick="return validateForm()"/>
+		</form>
+		<div id="divMessage"></div>
+
+	</div>
+</body>
+
+</html>
